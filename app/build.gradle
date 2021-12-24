@@ -76,8 +76,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 
     //Koin
-    implementation "org.koin:koin-android:$koinVersion"
+    implementation "org.koin:koin-android:$koinVersion``"
     implementation "org.koin:koin-androidx-viewmodel:$koinVersion"
+
+    //firebase dependencies
+    implementation platform('com.google.firebase:firebase-bom:29.0.3')
 
 
     // Dependencies for local unit tests
