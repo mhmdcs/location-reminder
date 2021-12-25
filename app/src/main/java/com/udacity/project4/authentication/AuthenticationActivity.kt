@@ -14,7 +14,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.udacity.project4.R
 import com.udacity.project4.databinding.ActivityAuthenticationBinding
 import com.udacity.project4.locationreminders.RemindersActivity
-import com.udacity.project4.utils.createChannel
 
 /**
  * This class should be the starting point of the app, It asks the users to sign in / register, and redirects the
@@ -62,7 +61,7 @@ class AuthenticationActivity : AppCompatActivity() {
             }
         })
 
-        createChannel(applicationContext)
+
     }
 
     //perform the login procedure flow
