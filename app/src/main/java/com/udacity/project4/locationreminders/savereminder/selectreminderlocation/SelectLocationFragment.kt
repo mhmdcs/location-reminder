@@ -155,7 +155,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun updateCurrentLocation(latLng: LatLng) {
-        reminderSelectedLocationStr = latLng.toString()
+        val lat = String.format("%.5f",latLng.latitude);
+        val lng = String.format("%.5f",latLng.longitude);
+
+        reminderSelectedLocationStr = "Lat: $lat, Long: $lng"
         selectedPOI = PointOfInterest(latLng, reminderSelectedLocationStr, "Current Location")
         latitude = latLng.latitude
         longitude = latLng.longitude
@@ -207,7 +210,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 .snippet(snippet)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
             )
-            reminderSelectedLocationStr = latLng.toString()
+            reminderSelectedLocationStr = snippet
             selectedPOI = PointOfInterest(latLng, reminderSelectedLocationStr, "Custom Location")
             latitude = latLng.latitude
             longitude = latLng.longitude
