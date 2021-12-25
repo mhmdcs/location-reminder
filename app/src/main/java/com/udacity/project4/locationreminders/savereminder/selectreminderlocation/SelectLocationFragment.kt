@@ -155,8 +155,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun updateCurrentLocation(latLng: LatLng) {
-        val lat = String.format("%.5f",latLng.latitude);
-        val lng = String.format("%.5f",latLng.longitude);
+        val lat = String.format("%.5f",latLng.latitude)
+        val lng = String.format("%.5f",latLng.longitude)
 
         reminderSelectedLocationStr = "Lat: $lat, Long: $lng"
         selectedPOI = PointOfInterest(latLng, reminderSelectedLocationStr, "Current Location")

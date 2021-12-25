@@ -30,6 +30,11 @@ fun sendNotification(context: Context, reminderDataItem: ReminderDataItem) {
             name,
             NotificationManager.IMPORTANCE_DEFAULT
         )
+        channel.enableLights(true)
+        channel.lightColor = Color.RED
+        channel.enableVibration(true)
+        channel.description = context.getString(R.string.notification_channel_description)
+
         notificationManager.createNotificationChannel(channel)
     }
 

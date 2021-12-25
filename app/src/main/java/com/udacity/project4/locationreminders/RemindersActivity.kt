@@ -24,6 +24,7 @@ class RemindersActivity : AppCompatActivity() {
         const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
         const val REQUEST_TURN_DEVICE_LOCATION_ON_REQUEST_CODE = 29
         const val TAG = "RemindersActivity"
+        const val ACTION_GEOFENCE_EVENT = "ACTION_GEOFENCE_EVENT"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

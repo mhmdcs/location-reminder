@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
@@ -13,7 +15,7 @@ import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
 
 class SaveReminderFragment : BaseFragment() {
-    //Get the view model this time as a single to be shared with the another fragment
+    //Get the view model this time as a single to be shared with the another fragment (SelectLocationFragment)
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSaveReminderBinding
 
@@ -34,6 +36,11 @@ class SaveReminderFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.lifecycleOwner = this
+
+//        _viewModel.reminderSelectedLocationStr.observe(viewLifecycleOwner, Observer {
+//            binding.selectedLocation.text = _viewModel.reminderSelectedLocationStr.value
+//        })
+
         binding.selectLocation.setOnClickListener {
             //Navigate to SelectLocationFragment to get the user location
             _viewModel.navigationCommand.value =
