@@ -22,7 +22,7 @@ class RemindersActivity : AppCompatActivity() {
         const val BACKGROUND_LOCATION_PERMISSION_INDEX = 1
         const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_REQUEST_CODE = 33
         const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
-        const val REQUEST_TURN_DEVICE_LOCATION_ON_REQUEST_CODE = 29
+        const val REQUEST_TURN_DEVICE_LOCATION_ON = 29
         const val TAG = "RemindersActivity"
         const val ACTION_GEOFENCE_EVENT = "ACTION_GEOFENCE_EVENT"
     }

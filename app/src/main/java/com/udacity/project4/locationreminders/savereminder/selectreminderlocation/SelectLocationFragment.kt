@@ -54,8 +54,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private var latitude = 0.0
     private var longitude = 0.0
 
-    private val runningOnQOrLater =
-        android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
