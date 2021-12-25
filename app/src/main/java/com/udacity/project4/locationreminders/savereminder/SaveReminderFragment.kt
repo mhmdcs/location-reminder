@@ -40,7 +40,7 @@ class SaveReminderFragment : BaseFragment() {
     private lateinit var binding: FragmentSaveReminderBinding
 
     //A GeofencingClient is the main entry point for interacting with the geofencing APIs.
-    private val geofencingClient = LocationServices.getGeofencingClient(requireContext())
+    lateinit var geofencingClient: GeofencingClient
 
     //A PendingIntent is a description of an Intent and target action to perform with it. Create one for the IntentService to handle the geofence transitions.
     //this PendingIntent handles the geofence transitions. Connect it to the GeofenceTransitionsBroadcastReceiver.
@@ -61,6 +61,7 @@ class SaveReminderFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_save_reminder, container, false)
+        geofencingClient = LocationServices.getGeofencingClient(requireContext())
 
         setDisplayHomeAsUpEnabled(true)
 
