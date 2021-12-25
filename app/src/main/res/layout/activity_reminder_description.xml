@@ -10,24 +10,56 @@
             type="com.udacity.project4.locationreminders.reminderslist.ReminderDataItem" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
         tools:context=".locationreminders.ReminderDescriptionActivity">
-        <!--TODO: add the design of the reminder details-->
+        <!--add the design of the reminder details-->
 
-        <TextView
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/reminder_description_activity_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Reminder Details"
+            android:text="@{reminderDataItem.title}"
+            android:textColor="@color/black"
+            android:layout_marginTop="50dp"
             android:textSize="@dimen/text_size_large"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Reminder Title" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/reminder_description_activity_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Reminder Description"
+            android:text="@{reminderDataItem.description}"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_large"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/reminder_description_activity_title" />
 
-    </LinearLayout>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/reminder_description_activity_selected_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/reminder_description_activity_description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            tools:text="Reminder Location"
+            android:textSize="@dimen/text_size_large"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:hint="@string/reminder_location"
+            android:text="@{reminderDataItem.location}"
+            android:textColor="@color/black"
+            app:drawableStartCompat="@drawable/ic_location" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

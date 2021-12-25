@@ -82,6 +82,7 @@ class SaveReminderFragment : BaseFragment() {
 
         binding.saveReminder.setOnClickListener {
             checkPermissionsAndStartGeofencing()
+
         }
     }
 
