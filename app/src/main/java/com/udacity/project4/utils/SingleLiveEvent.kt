@@ -36,6 +36,8 @@ import java.util.concurrent.atomic.AtomicBoolean
  *
  * Note that only one observer is going to be notified of changes.
  */
+//more simple explanation at this link https://proandroiddev.com/singleliveevent-to-help-you-work-with-livedata-and-events-5ac519989c70
+
 class SingleLiveEvent<T> : MutableLiveData<T>() {
 
     private val mPending = AtomicBoolean(false)
