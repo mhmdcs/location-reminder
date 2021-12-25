@@ -25,6 +25,44 @@ import org.junit.runner.RunWith
 @MediumTest
 class RemindersLocalRepositoryTest {
 
-//    TODO: Add testing implementation to the RemindersLocalRepository.kt
+    private lateinit var database: RemindersDatabase
+    private lateinit var remindersLocalRepository: RemindersLocalRepository
 
+    @get: Rule
+    var instantExecutorRule = InstantTaskExecutorRule()
+
+    @Before
+    fun setup() {
+        database = Room.inMemoryDatabaseBuilder(
+            ApplicationProvider.getApplicationContext(),
+            RemindersDatabase::class.java
+        )
+            .allowMainThreadQueries()
+            .build()
+
+        remindersLocalRepository = RemindersLocalRepository(
+            database.reminderDao(),
+            Dispatchers.Main
+        )
+    }
+
+    @After
+    fun closeDB() {
+        database.close()
+    }
+
+    @Test
+    fun callingGetReminder_resultInCorrectIdReturned() = runBlocking {
+        val reminder = ReminderDTO(
+            "Home",
+            "Visit family",
+            "Home",
+            26.57275,
+            77.32623,
+            "1"
+        )
+        remindersLocalRepository.saveReminder(reminder)
+        val retrievedReminder = remindersLocalRepository.getReminder(reminder.id) as Result.Success
+        assertThat(retrievedReminder.data.id, `is`(reminder.id))
+    }
 }
