@@ -33,9 +33,7 @@ class ReminderListFragment : BaseFragment() {
         setTitle(getString(R.string.app_name))
 
         binding.refreshLayout.setOnRefreshListener { _viewModel.loadReminders() }
-
-        _viewModel.showSnackBar.value = R.string.error_happened.toString()
-
+        
         return binding.root
     }
 

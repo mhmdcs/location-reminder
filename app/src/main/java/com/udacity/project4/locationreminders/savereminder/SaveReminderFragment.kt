@@ -94,8 +94,12 @@ class SaveReminderFragment : BaseFragment() {
             longitude = _viewModel.longitude.value,
             location = _viewModel.reminderSelectedLocationStr.value
         )
-            _viewModel.validateAndSaveReminder(reminderDataItem)
+
+        if (_viewModel.validateEnteredData(reminderDataItem)) {
+            _viewModel.saveReminder(reminderDataItem)
             addGeofenceToReminder(reminderDataItem)
+        }
+
     }
 
     @SuppressLint("MissingPermission")
