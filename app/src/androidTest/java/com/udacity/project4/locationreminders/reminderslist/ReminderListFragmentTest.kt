@@ -6,7 +6,9 @@ import android.os.Bundle
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
@@ -17,11 +19,13 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.udacity.project4.R
+import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.util.DataBindingIdlingResource
+import com.udacity.project4.util.monitorActivity
 import com.udacity.project4.util.monitorFragment
 import com.udacity.project4.utils.EspressoIdlingResource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -50,6 +54,9 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
     private lateinit var appContext: Application
 
     private lateinit var viewModel: RemindersListViewModel
+
+    private val databindingIdlingResource = DataBindingIdlingResource()
+
 
     @Before
     fun init() {
@@ -85,26 +92,43 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
         }
     }
 
-
-    private val dataBindingIdlingResource = DataBindingIdlingResource()
-
     @Before
     fun registerIdlingResource() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
-        IdlingRegistry.getInstance().register(dataBindingIdlingResource)
+        IdlingRegistry.getInstance().register(databindingIdlingResource)
     }
 
     @After
     fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
-        IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
+        IdlingRegistry.getInstance().unregister(databindingIdlingResource)
+    }
+
+
+    //testing snackbar error messages
+    @Test
+    fun savingReminderWithoutTitle_resultsInDisplayingSnackbarError() = runBlocking {
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        databindingIdlingResource.monitorActivity(activityScenario)
+        onView(withId(R.id.remindersRecyclerView)).check(matches(isDisplayed()))
+
+        //Navigate
+        onView(withId(R.id.addReminderFAB)).perform(click())
+
+        onView(withId(R.id.saveReminder)).perform(click())
+
+        //Assert error
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(matches(withText(R.string.err_enter_title)))
+
+        activityScenario.close()
     }
 
     //test the navigation of the fragments.
     @Test
     fun clickingAddReminder_resultsInNavigationToSaveReminderFragment() = runBlockingTest{
         val fragmentScenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
-        dataBindingIdlingResource.monitorFragment(fragmentScenario)
+        databindingIdlingResource.monitorFragment(fragmentScenario)
 
         val navController = mock(NavController::class.java)
 
@@ -125,27 +149,11 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
     fun ifNoData_resultsInDisplayingNoData() = runBlocking {
         repository.deleteAllReminders()
         val fragmentScenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
-        dataBindingIdlingResource.monitorFragment(fragmentScenario)
+        databindingIdlingResource.monitorFragment(fragmentScenario)
         onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
         repository.deleteAllReminders()
     }
 
-
-    //add testing for the error messages.
-    @Test
-    fun ifError_resultsInDisplayingError() = runBlocking {
-
-        val fragmentScenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
-        dataBindingIdlingResource.monitorFragment(fragmentScenario)
-
-        fragmentScenario.onFragment {
-            it._viewModel.showSnackBar.postValue("Error happened")
-        }
-
-      // onView(withText("Error happened")).check(matches(isDisplayed())) //causes test to fail for some reason
-
-        repository.deleteAllReminders()
-    }
 
 }
 
