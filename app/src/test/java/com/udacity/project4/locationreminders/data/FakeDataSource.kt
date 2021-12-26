@@ -22,15 +22,6 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>? = mutableListOf())
         shouldReturnError = value
     }
 
-    override fun observeReminders(): LiveData<Result<List<ReminderDTO>>> {
-        runBlocking { refreshReminders() }
-        return observableReminders
-    }
-
-    override suspend fun refreshReminders() {
-        observableReminders.value = getReminders()
-    }
-
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
 
         if(shouldReturnError){ //Wrap getReminders in if statements so that if shouldReturnError is true, the method returns Result.Error:
@@ -43,13 +34,22 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>? = mutableListOf())
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
 
         if(shouldReturnError){ //Wrap getReminder in if statements so that if shouldReturnError is true, the method returns Result.Error:
-            return Result.Error("Reminder $id not found")
+            return Result.Error("Reminder not found")
         }
         remindersServiceData[id]?.let {
             return Result.Success(it)
         }
         return Result.Error("Could not find reminder")
 
+    }
+
+    override fun observeReminders(): LiveData<Result<List<ReminderDTO>>> {
+        runBlocking { refreshReminders() }
+        return observableReminders
+    }
+
+    override suspend fun refreshReminders() {
+        observableReminders.value = getReminders()
     }
 
     override suspend fun saveReminder(reminder: ReminderDTO) {

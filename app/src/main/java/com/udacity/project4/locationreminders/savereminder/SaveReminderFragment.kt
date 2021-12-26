@@ -103,7 +103,7 @@ class SaveReminderFragment : BaseFragment() {
             _viewModel.saveReminder(reminderDataItem)
             addGeofenceToReminder(reminderDataItem)
         }
-
+//        Toast.makeText(requireContext(), "Geofence Reminder Added",Toast.LENGTH_LONG).show()
     }
 
     @SuppressLint("MissingPermission")
@@ -165,7 +165,7 @@ class SaveReminderFragment : BaseFragment() {
         //add an onFailureListener() to the locationSettingsResponseTask.
         locationSettingsResponseTask.addOnFailureListener { exception ->
             //Check if the exception is of type ResolvableApiException and if so,
-            //try calling the startResolutionForResult() method in order to prompt the user to turn on device location.
+            //call the startIntentSenderForResult() method in order to prompt the user to turn on device location.
             if (exception is ResolvableApiException && resolve) {
                 try {startIntentSenderForResult(exception.resolution.intentSender, REQUEST_TURN_DEVICE_LOCATION_ON,
                     null, 0, 0, 0,null)

@@ -72,13 +72,11 @@ class RemindersListViewModelTest {
     }
 
     @Test
-    fun displayErrorWhenViewModelIsEmpty(){
-        //WHEN - an error occurs
-        fakeDataSource.setReturnError(true)
-
-        //THEN - verify(assert) that empty value in the ViewModel is true (which triggers an error message to be shown)
+    fun testEmptyLiveDataInViewModelUsingSetReturnError(){
+         fakeDataSource.setReturnError(true)
+         remindersListViewModel.loadReminders()
+        //THEN - verify(assert) that empty LiveData value in the ViewModel is true (which triggers an error message to be shown)
         Assert.assertThat(remindersListViewModel.empty.getOrAwaitValue(), CoreMatchers.`is`(true))
     }
-
 
 }

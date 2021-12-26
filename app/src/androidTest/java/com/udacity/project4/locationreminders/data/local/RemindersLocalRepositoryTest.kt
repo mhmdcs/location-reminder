@@ -10,8 +10,7 @@ import com.udacity.project4.locationreminders.data.dto.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.instanceOf
+import org.hamcrest.CoreMatchers.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Before
@@ -65,4 +64,51 @@ class RemindersLocalRepositoryTest {
         val retrievedReminder = remindersLocalRepository.getReminder(reminder.id) as Result.Success
         assertThat(retrievedReminder.data.id, `is`(reminder.id))
     }
+
+    //two predictable errors "data not found" tests fore the repo:
+
+    @Test
+    fun callingGetReminderWithWrongId_resultInErrorMessage() = runBlocking {
+        val reminder1 = ReminderDTO(
+            "Home",
+            "Visit family",
+            "Home",
+            26.57275,
+            77.32623,
+            "1"
+        )
+
+        val reminder2 = ReminderDTO(
+            "School",
+            "Study",
+            "School",
+            56.27275,
+            47.72665,
+            "2"
+        )
+        remindersLocalRepository.saveReminder(reminder1)
+        remindersLocalRepository.saveReminder(reminder2)
+
+        val retrievedReminder = remindersLocalRepository.getReminder("2") as Result.Success
+        assertThat(retrievedReminder.data.id, not(equalTo(reminder1.id)))
+    }
+
+    @Test
+    fun callingReminderIdThatDoesntExist_resultInErrorMessage() = runBlocking {
+
+        val reminder = ReminderDTO(
+            "title",
+            "dec",
+            "loc",
+            0.0,
+            0.0,
+            "0"
+        )
+
+        val result = (remindersLocalRepository.getReminder(reminder.id) as Result.Error).message
+
+        assertThat(result, `is`("Reminder not found!"))
+
+    }
+
 }

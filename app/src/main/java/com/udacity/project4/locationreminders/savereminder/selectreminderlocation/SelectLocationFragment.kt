@@ -288,11 +288,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         permissions: Array<String>,
         grantResults: IntArray) {
         // Check if location permissions are granted and if so enable the location data layer.
-        if (requestCode == REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE) {
-            if (grantResults.size > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                enableMyLocation()
-            }
-        }else{
+        if (requestCode == REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE && grantResults.size > 0 && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            enableMyLocation()
+        } else {
             Snackbar.make(
                 binding.rootLayout,
                 R.string.permission_denied_explanation,

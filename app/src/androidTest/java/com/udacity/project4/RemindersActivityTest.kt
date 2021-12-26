@@ -1,14 +1,21 @@
 package com.udacity.project4
 
+import android.app.Activity
 import android.app.Application
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.udacity.project4.locationreminders.RemindersActivity
@@ -21,6 +28,9 @@ import com.udacity.project4.util.DataBindingIdlingResource
 import com.udacity.project4.util.monitorActivity
 import com.udacity.project4.utils.EspressoIdlingResource
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.not
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -42,6 +52,15 @@ class RemindersActivityTest :
     private lateinit var appContext: Application
 
     private val databindingIdlingResource = DataBindingIdlingResource()
+
+    // get activity context
+    private fun getActivity(activityScenario: ActivityScenario<RemindersActivity>): Activity? {
+        var activity: Activity? = null
+        activityScenario.onActivity {
+            activity = it
+        }
+        return activity
+    }
 
     /**
      * As we use Koin as a Service Locator Library to develop our code, we'll also use Koin to test our code.
@@ -93,6 +112,37 @@ class RemindersActivityTest :
     fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
         IdlingRegistry.getInstance().unregister(databindingIdlingResource)
+    }
+
+
+//    @Test
+//    fun noDataMessageTest() = runBlocking {
+//        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+//        databindingIdlingResource.monitorActivity(activityScenario)
+//
+//        Espresso.onView(withId(R.id.noDataTextView))
+//            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+//
+//        activityScenario.close()
+//
+//    }
+
+    @Test
+    fun toastMessageTest()  {
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        databindingIdlingResource.monitorActivity(activityScenario)
+
+        onView(withId(R.id.addReminderFAB)).perform(click())
+        onView(withId(R.id.reminderTitle)).check(matches(isDisplayed()))
+        onView(withId(R.id.reminderTitle)).perform(replaceText("New title"))
+        onView(withId(R.id.reminderDescription)).perform(replaceText("New description"))
+        onView(withId(R.id.selectLocation)).perform(click())
+        onView(withId(R.id.select_location_fragment_save_location)).perform(click())
+
+        val error = getActivity(activityScenario)?.getString(R.string.err_select_location)
+        onView(withText(error)).inRoot(withDecorView(not(`is`(getActivity(activityScenario)?.window?.decorView))))
+
+        activityScenario.close()
     }
 
 
