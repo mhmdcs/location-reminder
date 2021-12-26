@@ -48,11 +48,7 @@ class AuthenticationActivity : AppCompatActivity() {
         viewModel.authenticationState.observe(this, Observer { authenticationState ->
             when (authenticationState) {
                 AuthenticationViewModel.AuthenticationState.AUTHENTICATED -> {
-
-                    //launch the RemindersActivity,  and finish the current activity (AuthenticationActivity)
-                    val intent = Intent(this, RemindersActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    startRemindersActivity()
                 }
                 else -> Log.e(
                     TAG,
@@ -80,5 +76,19 @@ class AuthenticationActivity : AppCompatActivity() {
             ).build(), LOG_IN_REQUEST_CODE
         )
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == LOG_IN_REQUEST_CODE) {
+            val response = IdpResponse.fromResultIntent(data)
+            if (resultCode == Activity.RESULT_OK && response != null) startRemindersActivity()
+        }
+    }
+
+    private fun startRemindersActivity() {
+        //launch the RemindersActivity,  and finish the current activity (AuthenticationActivity)
+        val intent = Intent(this, RemindersActivity::class.java)
+        startActivity(intent)
+        finish()    }
 
 }

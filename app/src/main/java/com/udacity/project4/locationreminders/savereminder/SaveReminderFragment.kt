@@ -7,8 +7,10 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +34,7 @@ import com.udacity.project4.locationreminders.RemindersActivity.Companion.REQUES
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
+import org.koin.android.BuildConfig
 import org.koin.android.ext.android.inject
 
 class SaveReminderFragment : BaseFragment() {
@@ -127,14 +130,9 @@ class SaveReminderFragment : BaseFragment() {
             .build()
 
 
-        //Call removeGeofences() on the geofencingClient to remove any geofences already associated to the pending intent
-        geofencingClient.removeGeofences(geofencePendingIntent)?.run {
-            addOnCompleteListener {
-
-                //When removeGeofences() completes, regardless of its success or failure, add the new geofences.
+                //add the new geofence
                 geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)
-            }//OnCompleteListener boundaries
-        }//removeGeofences.run method boundaries
+
     }
 
     /**
@@ -169,11 +167,8 @@ class SaveReminderFragment : BaseFragment() {
             //Check if the exception is of type ResolvableApiException and if so,
             //try calling the startResolutionForResult() method in order to prompt the user to turn on device location.
             if (exception is ResolvableApiException && resolve) {
-                try {
-                    exception.startResolutionForResult(
-                        requireActivity(),
-                        REQUEST_TURN_DEVICE_LOCATION_ON
-                    )
+                try {startIntentSenderForResult(exception.resolution.intentSender, REQUEST_TURN_DEVICE_LOCATION_ON,
+                    null, 0, 0, 0,null)
                 } catch (sendEx: IntentSender.SendIntentException) { //If calling startResolutionForResult enters the catch block, print a log.
                     Log.d(TAG, "Error getting location settings resolution: " + sendEx.message)
                 }
@@ -244,15 +239,52 @@ class SaveReminderFragment : BaseFragment() {
             else -> REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
         }
 
-        //Request permissions passing in the current activity, the permissions array and the result code.
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            permissionsArray,
-            resultCode
-        )
+        //Request permissions passing in the current fragment, the permissions array and the result code.
+        requestPermissions(permissionsArray, resultCode)
+
 
     }
 
+    //If the requestCode is equal to REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE, then permission is granted,
+    //and if the grantResults array is non empty with PackageManager.PERMISSION_GRANTED in its first slot, then call enableMyLocation():
+    //Note, for Android 10+ Q we need to check background permission as well
+    //This method is invoked for every call on requestPermissions(String[], int).
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray) {
+        // Check if location permissions are granted and if so enable the
+        // location data layer.
+        if (
+            grantResults.isEmpty() ||
+            grantResults[RemindersActivity.LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED ||
+            (requestCode == REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_REQUEST_CODE &&
+                    grantResults[RemindersActivity.BACKGROUND_LOCATION_PERMISSION_INDEX] ==
+                    PackageManager.PERMISSION_DENIED)
+        ) {
+            Snackbar.make(
+                binding.saveReminderRootLayout,
+                R.string.permission_denied_explanation,
+                Snackbar.LENGTH_LONG
+            )
+                .setAction(R.string.settings) {
+                    startActivity(Intent().apply {
+                        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    })
+                }.show()
+        } else {
+            checkDeviceLocationSettingsAndStartGeofence()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
+            checkDeviceLocationSettingsAndStartGeofence(false)
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()
