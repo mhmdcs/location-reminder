@@ -105,7 +105,7 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
     }
 
 
-    //testing snackbar error messages
+    //testing snackbar error messages - flaky espresso test, make sure to turn off all animations from developer settings
     @Test
     fun savingReminderWithoutTitle_resultsInDisplayingSnackbarError() = runBlocking {
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)

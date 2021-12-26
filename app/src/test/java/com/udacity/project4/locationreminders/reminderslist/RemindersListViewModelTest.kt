@@ -62,7 +62,6 @@ class RemindersListViewModelTest {
         MatcherAssert.assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), CoreMatchers.`is`(true))
         mainCoroutineRule.resumeDispatcher()
         MatcherAssert.assertThat(remindersListViewModel.showLoading.getOrAwaitValue(), CoreMatchers.`is`(false))
-        MatcherAssert.assertThat(remindersListViewModel.showNoData.getOrAwaitValue(), CoreMatchers.`is`(false))
     }
 
     @Test
@@ -70,6 +69,15 @@ class RemindersListViewModelTest {
         fakeDataSource.deleteAllReminders()
         remindersListViewModel.loadReminders()
         MatcherAssert.assertThat(remindersListViewModel.showNoData.getOrAwaitValue(), CoreMatchers.`is`(true))
+    }
+
+    @Test
+    fun displayErrorWhenViewModelIsEmpty(){
+        //WHEN - an error occurs
+        fakeDataSource.setReturnError(true)
+
+        //THEN - verify(assert) that empty value in the ViewModel is true (which triggers an error message to be shown)
+        Assert.assertThat(remindersListViewModel.empty.getOrAwaitValue(), CoreMatchers.`is`(true))
     }
 
 

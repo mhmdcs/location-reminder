@@ -1,7 +1,9 @@
 package com.udacity.project4.locationreminders.reminderslist
 
 import android.app.Application
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.udacity.project4.base.BaseViewModel
 import com.udacity.project4.locationreminders.data.ReminderDataSource
@@ -16,6 +18,14 @@ class RemindersListViewModel(
 ) : BaseViewModel(app) {
     // list that holds the reminder data to be displayed on the UI
     val remindersList = MutableLiveData<List<ReminderDataItem>>()
+
+
+    private val remindersTest: LiveData<Result<List<ReminderDTO>>> = dataSource.observeReminders()
+
+    val error: LiveData<Boolean> = remindersTest.map { it is Result.Error }
+    val empty: LiveData<Boolean> = remindersTest.map { (it as? Result.Success)?.data.isNullOrEmpty() }
+    //These error and empty values above represent whether or not tasks loaded properly. If there is an error, error and empty should both be true when you're testing error-handling in RemindersListViewModelTest
+
 
     /**
      * Get all the reminders from the DataSource and add them to the remindersList to be shown on the UI,

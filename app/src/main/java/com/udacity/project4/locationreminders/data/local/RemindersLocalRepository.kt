@@ -1,5 +1,7 @@
 package com.udacity.project4.locationreminders.data.local
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
@@ -18,6 +20,8 @@ class RemindersLocalRepository(
     private val remindersDao: RemindersDao,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ReminderDataSource {
+
+    private val observableReminders = MutableLiveData<Result<List<ReminderDTO>>>()
 
     /**
      * Get the reminders list from the local db
@@ -73,4 +77,12 @@ class RemindersLocalRepository(
                 remindersDao.deleteAllReminders()
             }
         }
+
+    override fun observeReminders(): LiveData<Result<List<ReminderDTO>>> {
+        return observableReminders
     }
+
+    override suspend fun refreshReminders() {
+        observableReminders.value = getReminders()
+    }
+}
