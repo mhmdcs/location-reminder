@@ -79,4 +79,17 @@ class RemindersListViewModelTest {
         Assert.assertThat(remindersListViewModel.empty.getOrAwaitValue(), CoreMatchers.`is`(true))
     }
 
+    @Test
+    fun testSnackbarInCaseOfExceptionThrown() = runBlockingTest {
+
+        fakeDataSource.deleteAllReminders()
+        fakeDataSource.setReturnError(true)
+        remindersListViewModel.loadReminders()
+
+        val bool = remindersListViewModel.showSnackBar.getOrAwaitValue() == "Reminders not found"
+
+        MatcherAssert.assertThat(bool, Matchers.`is`(true))
+
+    }
+
 }

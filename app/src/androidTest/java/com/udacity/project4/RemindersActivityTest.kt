@@ -114,19 +114,6 @@ class RemindersActivityTest :
         IdlingRegistry.getInstance().unregister(databindingIdlingResource)
     }
 
-
-//    @Test
-//    fun noDataMessageTest() = runBlocking {
-//        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
-//        databindingIdlingResource.monitorActivity(activityScenario)
-//
-//        Espresso.onView(withId(R.id.noDataTextView))
-//            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-//
-//        activityScenario.close()
-//
-//    }
-
     @Test
     fun toastMessageTest()  {
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
@@ -139,8 +126,8 @@ class RemindersActivityTest :
         onView(withId(R.id.selectLocation)).perform(click())
         onView(withId(R.id.select_location_fragment_save_location)).perform(click())
 
-        val error = getActivity(activityScenario)?.getString(R.string.err_select_location)
-        onView(withText(error)).inRoot(withDecorView(not(`is`(getActivity(activityScenario)?.window?.decorView))))
+        val toastMessage = getActivity(activityScenario)?.getString(R.string.err_select_location)
+        onView(withText(toastMessage)).inRoot(withDecorView(not(`is`(getActivity(activityScenario)?.window?.decorView))))
 
         activityScenario.close()
     }
@@ -151,26 +138,30 @@ class RemindersActivityTest :
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         databindingIdlingResource.monitorActivity(activityScenario)
 
-        Espresso.onView(withId(R.id.noDataTextView))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        Espresso.onView(withId(R.id.addReminderFAB)).perform(ViewActions.click())
+        onView(withId(R.id.noDataTextView))
+            .check(matches(isDisplayed()))
+        onView(withId(R.id.addReminderFAB)).perform(click())
 
-        Espresso.onView(withId(R.id.reminderTitle))
+        onView(withId(R.id.reminderTitle))
             .perform(ViewActions.typeText("Reminder"), ViewActions.closeSoftKeyboard())
-        Espresso.onView(withId(R.id.reminderDescription))
+        onView(withId(R.id.reminderDescription))
             .perform(ViewActions.typeText("Description"), ViewActions.closeSoftKeyboard())
 
-        Espresso.onView(withId(R.id.selectLocation)).perform(ViewActions.click())
+        onView(withId(R.id.selectLocation)).perform(click())
 
-        Espresso.onView(withId(R.id.select_location_fragment_map_view)).perform(ViewActions.click())
-        Espresso.onView(withId(R.id.select_location_fragment_save_location)).perform(ViewActions.click())
+        onView(withId(R.id.select_location_fragment_map_view)).perform(click())
+        onView(withId(R.id.select_location_fragment_save_location)).perform(click())
 
-        Espresso.onView(withId(R.id.saveReminder)).perform(ViewActions.click())
+        onView(withId(R.id.saveReminder)).perform(click())
 
-        Espresso.onView(ViewMatchers.withText("Reminder"))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-        Espresso.onView(ViewMatchers.withText("Description"))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        onView(withText("Reminder"))
+            .check(matches(isDisplayed()))
+        onView(withText("Description"))
+            .check(matches(isDisplayed()))
+
+        //toast message "Reminder Saved !"  after saving a reminder test
+        val toastMessage = getActivity(activityScenario)?.getString(R.string.reminder_saved)
+        onView(withText(toastMessage)).inRoot(withDecorView(not(`is`(getActivity(activityScenario)?.window?.decorView))))
 
         activityScenario.close()
     }
