@@ -1,4 +1,4 @@
-package com.udacity.project4.base
+package com.udacity.project4.utils
 
 import androidx.navigation.NavDirections
 

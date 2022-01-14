@@ -34,7 +34,7 @@ fun <T> LiveData<T>.getOrAwaitValue(
     this.observeForever(observer)
 
     try {
-        afterObserve.invoke()
+        afterObserve.invoke() //invoke() is how you execute function types
 
         // Don't wait indefinitely if the LiveData is not set.
         if (!latch.await(time, timeUnit)) {
